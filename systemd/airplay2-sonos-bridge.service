@@ -1,0 +1,26 @@
+[Unit]
+Description=AirPlay 2 to Sonos bridge
+After=network-online.target avahi-daemon.service
+Wants=network-online.target
+Requires=avahi-daemon.service
+# Never give up restarting.
+StartLimitIntervalSec=0
+
+[Service]
+Type=notify
+NotifyAccess=main
+User=airplay
+ExecStart=/usr/bin/python3 /opt/airplay2-sonos-bridge/bridge.py
+# Restarted when the main loop stops answering for this long.
+WatchdogSec=60
+Restart=always
+RestartSec=3
+# nqptp needs UDP ports 319 and 320.
+AmbientCapabilities=CAP_NET_BIND_SERVICE
+RuntimeDirectory=airplay2-sonos-bridge
+Environment=XDG_RUNTIME_DIR=/run
+MemoryHigh=400M
+MemoryMax=600M
+
+[Install]
+WantedBy=multi-user.target
